@@ -84,7 +84,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         let coordinate = map.convert(location, toCoordinateFrom: map)
         print(coordinate)
         var apiResponse2: [ApiResponse] = []
-        AF.request("https://geo.api.gouv.fr/communes?lat=\(coordinate.latitude)&lon=\(coordinate.longitude)&fields=nom,code,codeDepartement,codeRegion,population,departement&format=json&geometry=centre", method: .get).validate(statusCode: [200]).responseDecodable(of: [ApiResponse].self) {[weak self] resp in
+        AF.request("https://geo.api.gouv.fr/communes?lat=\(coordinate.latitude)&lon=\(coordinate.longitude)&fields=nom,code,codeDepartement,codeRegion,population,departement,region&format=json&geometry=centre", method: .get).validate(statusCode: [200]).responseDecodable(of: [ApiResponse].self) {[weak self] resp in
             
             switch resp.result {
             case .success(let apiResponse):
@@ -92,6 +92,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
                 print(apiResponse)
                 print(apiResponse[0].nom)
                 print(apiResponse[0].departement.nom)
+                print(apiResponse[0].region.nom)
                 apiResponse2 = apiResponse
                 changeLabel()
                 
@@ -103,11 +104,25 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         func changeLabel() {
             print(apiResponse2)
             let annotation = MKPointAnnotation()
+        
             annotation.coordinate = coordinate
             print("--")
             print(apiResponse2[0])
             annotation.title = String(apiResponse2[0].nom + ", " + apiResponse2[0].departement.nom)
+            let annotationView = MKAnnotationView()
+            
+            
             map.addAnnotation(annotation)
+            
+            
+            let pinView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: String(annotation.hash))
+            
+            let rightButton = UIButton(type: .contactAdd)
+            rightButton.tag = annotation.hash
+            pinView.animatesDrop = true
+            pinView.canShowCallout = true
+            pinView.rightCalloutAccessoryView = rightButton
+            
         }
         
         

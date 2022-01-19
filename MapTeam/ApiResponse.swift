@@ -15,10 +15,16 @@ struct ApiResponse: Codable{
     let codeRegion: String
     let population: Int
     let departement: Departement
+    let region: Region
 }
 
 struct Departement: Codable{
     let code: String
     let nom: String
     //let codeRegion: String
+}
+
+struct Region: Codable{
+    let code: String
+    let nom: String
 }
