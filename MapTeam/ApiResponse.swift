@@ -14,4 +14,11 @@ struct ApiResponse: Codable{
     let codeDepartement: String
     let codeRegion: String
     let population: Int
-    }
+    let departement: Departement
+}
+
+struct Departement: Codable{
+    let code: String
+    let nom: String
+    //let codeRegion: String
+}

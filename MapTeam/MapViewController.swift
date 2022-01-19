@@ -83,24 +83,35 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         let location = gestureRecognizer.location(in: map)
         let coordinate = map.convert(location, toCoordinateFrom: map)
         print(coordinate)
-    
-        AF.request("https://geo.api.gouv.fr/communes?lat=\(coordinate.latitude)&lon=\(coordinate.longitude)&fields=nom,code,codeDepartement,codeRegion,population&format=json&geometry=centre", method: .get).validate(statusCode: [200]).responseDecodable(of: [ApiResponse].self) {[weak self] resp in
+        var apiResponse2: [ApiResponse] = []
+        AF.request("https://geo.api.gouv.fr/communes?lat=\(coordinate.latitude)&lon=\(coordinate.longitude)&fields=nom,code,codeDepartement,codeRegion,population,departement&format=json&geometry=centre", method: .get).validate(statusCode: [200]).responseDecodable(of: [ApiResponse].self) {[weak self] resp in
             
             switch resp.result {
             case .success(let apiResponse):
                 
                 print(apiResponse)
-                
+                print(apiResponse[0].nom)
+                print(apiResponse[0].departement.nom)
+                apiResponse2 = apiResponse
+                changeLabel()
                 
             case .failure(let aferror):
                 print(String(describing: aferror))
             }
         }
-        
         // Add annotation:
-        let annotation = MKPointAnnotation()
-        annotation.coordinate = coordinate
-        map.addAnnotation(annotation)
+        func changeLabel() {
+            print(apiResponse2)
+            let annotation = MKPointAnnotation()
+            annotation.coordinate = coordinate
+            print("--")
+            print(apiResponse2[0])
+            annotation.title = String(apiResponse2[0].nom + ", " + apiResponse2[0].departement.nom)
+            map.addAnnotation(annotation)
+        }
+        
+        
+        
     }
     
     
