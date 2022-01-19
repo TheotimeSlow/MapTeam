@@ -67,31 +67,60 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Nom" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pz2-E9-Fwp">
-                                <rect key="frame" x="117" y="44" width="180" height="21"/>
+                                <rect key="frame" x="15" y="56" width="36.5" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Population" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eeb-kS-p74">
+                                <rect key="frame" x="318" y="89" width="81" height="20.5"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Departement" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kBv-b3-vjH">
+                                <rect key="frame" x="15" y="87" width="100.5" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="R2C-y0-IPo">
-                                <rect key="frame" x="0.0" y="65" width="414" height="831"/>
+                                <rect key="frame" x="0.0" y="119.5" width="414" height="776.5"/>
                             </mapView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="252" text="Region" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dPY-Nx-2yd">
+                                <rect key="frame" x="346" y="56" width="53" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="fGZ-40-dxc"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="pz2-E9-Fwp" firstAttribute="top" secondItem="fGZ-40-dxc" secondAttribute="top" id="3iP-Jf-F3f"/>
+                            <constraint firstItem="eeb-kS-p74" firstAttribute="top" secondItem="dPY-Nx-2yd" secondAttribute="bottom" constant="12" id="3sc-bI-s8z"/>
+                            <constraint firstAttribute="bottom" secondItem="R2C-y0-IPo" secondAttribute="bottom" id="8Ff-Ke-OSs"/>
                             <constraint firstItem="R2C-y0-IPo" firstAttribute="leading" secondItem="fGZ-40-dxc" secondAttribute="leading" id="BJN-Kw-8pM"/>
+                            <constraint firstItem="R2C-y0-IPo" firstAttribute="trailing" secondItem="fGZ-40-dxc" secondAttribute="trailing" id="FOV-mK-Pz0"/>
+                            <constraint firstItem="pz2-E9-Fwp" firstAttribute="top" secondItem="fGZ-40-dxc" secondAttribute="top" constant="12" id="K0g-uk-Z57"/>
+                            <constraint firstAttribute="trailing" secondItem="eeb-kS-p74" secondAttribute="trailing" constant="15" id="LKl-vP-IgU"/>
+                            <constraint firstItem="R2C-y0-IPo" firstAttribute="top" secondItem="eeb-kS-p74" secondAttribute="bottom" constant="10" id="W7C-eq-Pow"/>
+                            <constraint firstItem="pz2-E9-Fwp" firstAttribute="leading" secondItem="fGZ-40-dxc" secondAttribute="leading" constant="15" id="YjW-qC-jdE"/>
                             <constraint firstItem="R2C-y0-IPo" firstAttribute="trailing" secondItem="fGZ-40-dxc" secondAttribute="trailing" id="b6K-lk-euO"/>
-                            <constraint firstItem="R2C-y0-IPo" firstAttribute="top" secondItem="pz2-E9-Fwp" secondAttribute="bottom" id="c0S-MH-iGe"/>
-                            <constraint firstItem="fGZ-40-dxc" firstAttribute="trailing" secondItem="pz2-E9-Fwp" secondAttribute="trailing" constant="117" id="fAn-YY-r0Y"/>
+                            <constraint firstItem="kBv-b3-vjH" firstAttribute="leading" secondItem="fGZ-40-dxc" secondAttribute="leading" constant="15" id="iUw-Qd-B7c"/>
                             <constraint firstAttribute="bottom" secondItem="R2C-y0-IPo" secondAttribute="bottom" id="mLt-9a-FIf"/>
-                            <constraint firstItem="pz2-E9-Fwp" firstAttribute="leading" secondItem="fGZ-40-dxc" secondAttribute="leading" constant="117" id="rsu-lC-Nln"/>
+                            <constraint firstItem="dPY-Nx-2yd" firstAttribute="top" secondItem="fGZ-40-dxc" secondAttribute="top" constant="12" id="pA9-I6-n9X"/>
+                            <constraint firstItem="R2C-y0-IPo" firstAttribute="leading" secondItem="fGZ-40-dxc" secondAttribute="leading" id="uaO-m3-KMp"/>
+                            <constraint firstItem="kBv-b3-vjH" firstAttribute="top" secondItem="pz2-E9-Fwp" secondAttribute="bottom" constant="10" id="yxf-KF-TIc"/>
+                            <constraint firstItem="fGZ-40-dxc" firstAttribute="trailing" secondItem="dPY-Nx-2yd" secondAttribute="trailing" constant="15" id="znO-ez-VZO"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="LDg-SA-4Pr"/>
                     <connections>
                         <outlet property="Map" destination="R2C-y0-IPo" id="ues-vH-60e"/>
-                        <outlet property="villeLabel" destination="pz2-E9-Fwp" id="Eil-Qp-aWH"/>
+                        <outlet property="departementVille" destination="kBv-b3-vjH" id="sYa-2H-Q06"/>
+                        <outlet property="nomVille" destination="pz2-E9-Fwp" id="lVM-9u-aji"/>
+                        <outlet property="populationVille" destination="eeb-kS-p74" id="yuC-7j-DJz"/>
+                        <outlet property="regionVille" destination="dPY-Nx-2yd" id="7t4-R6-Th3"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Xfi-sa-vxo" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

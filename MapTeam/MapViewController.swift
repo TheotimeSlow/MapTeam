@@ -12,13 +12,16 @@ import Alamofire
 class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDelegate, UIGestureRecognizerDelegate {
 
     @IBOutlet weak var map: MKMapView!
-    @IBOutlet weak var villeLabel: UILabel!
+    @IBOutlet weak var nomVille: UILabel!
+    @IBOutlet weak var regionVille: UILabel!
+    @IBOutlet weak var departementVille: UILabel!
+    @IBOutlet weak var populationVille: UILabel!
     var locationManager:CLLocationManager!
     var currentLocationStr = "Current location"
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        map.delegate = self
         let gestureRecognizer = UITapGestureRecognizer(
                                       target: self, action:#selector(handleTap))
             gestureRecognizer.delegate = self
@@ -89,10 +92,12 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
             switch resp.result {
             case .success(let apiResponse):
                 
+                print("---------API RESPONSE---------")
                 print(apiResponse)
                 print(apiResponse[0].nom)
                 print(apiResponse[0].departement.nom)
                 print(apiResponse[0].region.nom)
+                print("------------------------------")
                 apiResponse2 = apiResponse
                 changeLabel()
                 
@@ -102,32 +107,30 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         }
         // Add annotation:
         func changeLabel() {
-            print(apiResponse2)
-            let annotation = MKPointAnnotation()
-        
-            annotation.coordinate = coordinate
-            print("--")
-            print(apiResponse2[0])
-            annotation.title = String(apiResponse2[0].nom + ", " + apiResponse2[0].departement.nom)
-            let annotationView = MKAnnotationView()
             
+           
+            let annotation = CCMPointAnnotation()
+            annotation.apiResponse = apiResponse2.first
+            annotation.coordinate = coordinate
+            annotation.title = String(apiResponse2[0].nom + ", " + apiResponse2[0].departement.nom)
+            //let annotationView = MKAnnotationView()
             
             map.addAnnotation(annotation)
-            
-            
-            let pinView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: String(annotation.hash))
-            
-            let rightButton = UIButton(type: .contactAdd)
-            rightButton.tag = annotation.hash
-            pinView.animatesDrop = true
-            pinView.canShowCallout = true
-            pinView.rightCalloutAccessoryView = rightButton
+            mapView(map, didSelect: MKAnnotationView())
             
         }
-        
-        
-        
+        func mapView(_: MKMapView, didSelect view: MKAnnotationView){
+            print("Détail \(apiResponse2.first!.population)")
+            self.nomVille.text = "Nom : \(apiResponse2.first!.nom)"
+            self.regionVille.text = "Région : \(apiResponse2.first!.region.nom)"
+            self.departementVille.text = "Departement : \(apiResponse2.first!.departement.nom)"
+            self.populationVille.text = "Population : \(apiResponse2.first!.population)"
+ 
+        }
     }
     
+class CCMPointAnnotation: MKPointAnnotation{
+    var apiResponse: ApiResponse?
+}
     
 }
