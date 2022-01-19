@@ -16,8 +16,13 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     @IBOutlet weak var regionVille: UILabel!
     @IBOutlet weak var departementVille: UILabel!
     @IBOutlet weak var populationVille: UILabel!
+    @IBOutlet weak var latitudeVille: UILabel!
+    @IBOutlet weak var longitudeVille: UILabel!
+    @IBOutlet weak var saveButton: UIButton!
     var locationManager:CLLocationManager!
     var currentLocationStr = "Current location"
+    
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -26,16 +31,29 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
                                       target: self, action:#selector(handleTap))
             gestureRecognizer.delegate = self
             map.addGestureRecognizer(gestureRecognizer)
+
+        saveButton.layer.cornerRadius = 21
+        saveButton.layer.masksToBounds = true
+        
     }
     override func viewDidAppear(_ animated: Bool){
         determineCurrentLocation()
+        
+        let uds = UserDefaults.standard.dictionaryRepresentation().values
+        
+        
+        for ud in uds{
+            
+            print(ud)
+            
+        }
     }
 
     func locationManager(_ manager:CLLocationManager, didUpdateLocations locations: [CLLocation]){
         let mUserLocation:CLLocation = locations[0] as CLLocation
         
         let center = CLLocationCoordinate2D(latitude:mUserLocation.coordinate.latitude, longitude: mUserLocation.coordinate.longitude)
-        print(center)
+        
         let mRegion = MKCoordinateRegion(center: center, span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01))
         map.setRegion(mRegion, animated: true)
         
@@ -85,7 +103,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         
         let location = gestureRecognizer.location(in: map)
         let coordinate = map.convert(location, toCoordinateFrom: map)
-        print(coordinate)
+        
         var apiResponse2: [ApiResponse] = []
         AF.request("https://geo.api.gouv.fr/communes?lat=\(coordinate.latitude)&lon=\(coordinate.longitude)&fields=nom,code,codeDepartement,codeRegion,population,departement,region&format=json&geometry=centre", method: .get).validate(statusCode: [200]).responseDecodable(of: [ApiResponse].self) {[weak self] resp in
             
@@ -120,11 +138,13 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
             
         }
         func mapView(_: MKMapView, didSelect view: MKAnnotationView){
-            print("Détail \(apiResponse2.first!.population)")
-            self.nomVille.text = "Nom : \(apiResponse2.first!.nom)"
-            self.regionVille.text = "Région : \(apiResponse2.first!.region.nom)"
-            self.departementVille.text = "Departement : \(apiResponse2.first!.departement.nom)"
-            self.populationVille.text = "Population : \(apiResponse2.first!.population)"
+            
+            self.nomVille.text = "\(apiResponse2.first!.nom)"
+            self.regionVille.text = "\(apiResponse2.first!.region.nom)"
+            self.departementVille.text = "\(apiResponse2.first!.departement.nom)"
+            self.populationVille.text = " \(apiResponse2.first!.population) habitants"
+            self.latitudeVille.text = String(coordinate.latitude)
+            self.longitudeVille.text = String(coordinate.longitude)
  
         }
     }
@@ -132,5 +152,45 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
 class CCMPointAnnotation: MKPointAnnotation{
     var apiResponse: ApiResponse?
 }
+ 
+    
+    @IBAction func onClickFav(_ sender: Any) {
+        var toSave = [[String:Any]]()
+        print(self.latitudeVille.text)
+        print(self.longitudeVille.text)
+        toSave.append(["nom":self.nomVille.text,"departement":self.departementVille.text,"latitude":self.latitudeVille.text, "longitude":self.longitudeVille.text])
+        let latLong: String = self.latitudeVille.text!+self.longitudeVille.text!
+        print(latLong)
+        storeToUserDefaults(valueToStore: toSave, key: latLong)
+        //storeToUserDefaults(valueToStore: latLong, key: "cle")
+        getFromUserDefaults(key: latLong)
+        
+        let toastLabel = UILabel(frame: CGRect(x: self.view.frame.size.width/2 - 75, y: self.view.frame.size.height-100, width: 150, height: 35))
+        toastLabel.backgroundColor = UIColor.black.withAlphaComponent(0.6)
+            toastLabel.textColor = UIColor.white
+            
+            toastLabel.textAlignment = .center;
+            toastLabel.text = "Point sauvegardé"
+            toastLabel.alpha = 1.0
+            toastLabel.layer.cornerRadius = 10;
+            toastLabel.clipsToBounds  =  true
+            self.view.addSubview(toastLabel)
+            UIView.animate(withDuration: 4.0, delay: 0.1, options: .curveEaseOut, animations: {
+                 toastLabel.alpha = 0.0
+            }, completion: {(isCompleted) in
+                toastLabel.removeFromSuperview()
+            })
+
+    }
+    private func storeToUserDefaults(valueToStore value: [[String:Any]], key: String){
+        let ud = UserDefaults.standard
+        ud.set(value, forKey: key)
+    }
+    private func getFromUserDefaults(key: String){
+        let ud = UserDefaults.standard
+        print(ud.value(forKey: key))
+        
+    }
+    
     
 }
