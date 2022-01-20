@@ -25,5 +25,18 @@ class ViewController: UIViewController {
     }
     
 
+    @IBAction func githubButton(_ sender: Any) {
+        print("Appuie sur le bouton github")
+        if let githubUrl = URL(string: "https://github.com/TheotimeSlow/MapTeam") {
+            if UIApplication.shared.canOpenURL(githubUrl) {
+                UIApplication.shared.open(githubUrl, options: [:])
+                print("Ouverture de l'url")
+            } else {
+                print("Impossible d'ouvrir l'url")
+        }
+        }
+    }
+    
+
 }
 
