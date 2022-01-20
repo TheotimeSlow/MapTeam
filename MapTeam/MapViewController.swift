@@ -221,4 +221,9 @@ class CCMPointAnnotation: MKPointAnnotation{
     }
    
     
+    @IBAction func githubButton(_ sender: Any) {
+        if let url = URL(string: "https://github.com/TheotimeSlow/MapTeam") {
+        UIApplication.shared.open(url)
+        }
+    }
 }
