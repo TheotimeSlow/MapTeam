@@ -8,6 +8,7 @@ import MapKit
 import UIKit
 import CoreLocation
 import Alamofire
+import SQLite
 
 class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDelegate, UIGestureRecognizerDelegate {
 
@@ -21,11 +22,38 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     @IBOutlet weak var saveButton: UIButton!
     var locationManager:CLLocationManager!
     var currentLocationStr = "Current location"
-    
-    
+    var db : Connection?
+    let coordinates = Table("coordinates")
+    let id = Expression<Int64>("id")
+    let nomCol = Expression<String?>("nomCol")
+    let departementCol = Expression<String?>("departementCol")
+    let latitudeCol = Expression<String?>("latitudeCol")
+    let longitudeCol = Expression<String?>("longitudeCol")
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        let path = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first!
+        
+        do{
+            self.db = try Connection("\(path)/db.sqlite3")
+        } catch {
+            print("Unable to create connection: \(error)")
+        }
+        
+        
+        
+        do{
+            try self.db?.run(coordinates.create(ifNotExists:true){ t in
+            t.column(id, primaryKey: .autoincrement)
+            t.column(nomCol)
+            t.column(departementCol)
+            t.column(latitudeCol)
+            t.column(longitudeCol)
+        })
+        }catch{
+            print("Table error create: \(error)")
+        }
+        
         map.delegate = self
         let gestureRecognizer = UITapGestureRecognizer(
                                       target: self, action:#selector(handleTap))
@@ -38,15 +66,24 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     }
     override func viewDidAppear(_ animated: Bool){
         determineCurrentLocation()
-        
-        let uds = UserDefaults.standard.dictionaryRepresentation().values
-        
-        
-        for ud in uds{
-            
-            print(ud)
-            
+        do{
+           
+            for coordinate in try self.db!.prepare(coordinates) {
+                print("id: \(coordinate[id]), nom \(coordinate[nomCol]), departement \(coordinate[departementCol]), latitude \(coordinate[latitudeCol]), longitude \(coordinate[longitudeCol])")
+                if let lati = Double(coordinate[latitudeCol]!), let longi = Double(coordinate[longitudeCol]!){
+                    let dbAnnotation:MKPointAnnotation = MKPointAnnotation()
+                    dbAnnotation.coordinate = CLLocationCoordinate2DMake(lati, longi)
+                    
+                    
+                    dbAnnotation.title = "\(coordinate[nomCol] ?? ""), \(coordinate[departementCol] ?? "")"
+                    map.addAnnotation(dbAnnotation)
+                }
+
+            }
+        }catch{
+            print("Print error table : \(error)")
         }
+        
     }
 
     func locationManager(_ manager:CLLocationManager, didUpdateLocations locations: [CLLocation]){
@@ -155,16 +192,16 @@ class CCMPointAnnotation: MKPointAnnotation{
  
     
     @IBAction func onClickFav(_ sender: Any) {
-        var toSave = [[String:Any]]()
         print(self.latitudeVille.text)
         print(self.longitudeVille.text)
-        toSave.append(["nom":self.nomVille.text,"departement":self.departementVille.text,"latitude":self.latitudeVille.text, "longitude":self.longitudeVille.text])
-        let latLong: String = self.latitudeVille.text!+self.longitudeVille.text!
-        print(latLong)
-        storeToUserDefaults(valueToStore: toSave, key: latLong)
-        //storeToUserDefaults(valueToStore: latLong, key: "cle")
-        getFromUserDefaults(key: latLong)
-        
+       
+        do{
+            
+            try self.db?.run(self.coordinates.insert(self.nomCol <- self.nomVille.text, self.departementCol <- self.departementVille.text, self.latitudeCol <- self.latitudeVille.text, self.longitudeCol <- self.longitudeVille.text))
+            
+        }catch{
+            print("insert error : \(error)")
+        }
         let toastLabel = UILabel(frame: CGRect(x: self.view.frame.size.width/2 - 75, y: self.view.frame.size.height-100, width: 150, height: 35))
         toastLabel.backgroundColor = UIColor.black.withAlphaComponent(0.6)
             toastLabel.textColor = UIColor.white
@@ -182,15 +219,6 @@ class CCMPointAnnotation: MKPointAnnotation{
             })
 
     }
-    private func storeToUserDefaults(valueToStore value: [[String:Any]], key: String){
-        let ud = UserDefaults.standard
-        ud.set(value, forKey: key)
-    }
-    private func getFromUserDefaults(key: String){
-        let ud = UserDefaults.standard
-        print(ud.value(forKey: key))
-        
-    }
-    
+   
     
 }
